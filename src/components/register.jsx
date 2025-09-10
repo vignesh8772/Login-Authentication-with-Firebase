@@ -1,5 +1,9 @@
 import { useState } from "react"
 import res from '../services/RegisterAPI';
+import StoreUser from "../services/Storage";
+import { Navigate } from "react-router-dom";
+import { isAuthentication } from "../services/auth";
+
 
 
 export default function Register() {
@@ -36,7 +40,7 @@ export default function Register() {
     if (!haserror) {
     setloading(true);
     res(input).then((res)=>{
-      console.log(res);
+      StoreUser(res.data.idToken);
     }).catch((err)=>{
       console.log(err);
     }).finally(
@@ -50,7 +54,9 @@ export default function Register() {
     password: "",
   });
 
-  
+  // if (isAuthentication()) {
+  //   return < Navigate />
+  // }
 
   return (
     <>
@@ -126,6 +132,7 @@ export default function Register() {
                   <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               )}
+              
               <button
                 type="submit"
                 disabled={loading}
