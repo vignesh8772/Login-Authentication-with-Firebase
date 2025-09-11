@@ -1,10 +1,8 @@
-import { useState } from "react"
-import res from '../services/RegisterAPI';
+import { useState } from "react";
+import res from "../services/RegisterAPI";
 import StoreUser from "../services/Storage";
-import { Navigate } from "react-router-dom";
-import { isAuthentication } from "../services/auth";
-
-
+import { Link, Navigate } from "react-router-dom";
+import  isAuthentication  from "../services/auth";
 
 export default function Register() {
   const initerror = {
@@ -20,43 +18,65 @@ export default function Register() {
 
   function registerwork(event) {
     event.preventDefault();
-    let errors = initerror;
-    let haserror=false;
-    
-    if (input.name == "") {
+    let errors = { ...initerror }; // clone, don’t reuse reference
+    let haserror = false;
+
+    if (input.name.trim() === "") {
       errors.name.required = true;
-      haserror=true;
+      haserror = true;
     }
-    if (input.email == "") {
+    if (input.email.trim() === "") {
       errors.email.required = true;
-      haserror=true;
+      haserror = true;
     }
-    if (input.password == "") {
+    if (input.password.trim() === "") {
       errors.password.required = true;
-      haserror=true;
+      haserror = true;
     }
+
     setError(errors);
 
     if (!haserror) {
-    setloading(true);
-    res(input).then((res)=>{
-      StoreUser(res.data.idToken);
-    }).catch((err)=>{
-      console.log(err);
-    }).finally(
-      setloading(false)
-    )
+      setloading(true);
+      res(input)
+        .then((res) => {
+          StoreUser(res.data.idToken);
+        })
+        .catch((err) => {
+          console.log("Register error:", err);
+
+          const errorMessage = err?.response?.data?.error?.message || "";
+
+          if (errorMessage === "EMAIL_EXISTS") {
+            setError({
+              ...errors,
+              custom_error: "This email is already registered",
+            });
+          } else if (errorMessage.includes("WEAK_PASSWORD")) {
+            setError({
+              ...errors,
+              custom_error: "Weak password. Must be at least 6 characters.",
+            });
+          } else {
+            setError({
+              ...errors,
+              custom_error: "Something went wrong. Please try again.",
+            });
+          }
+        })
+        .finally(() => setloading(false));
+    }
   }
-  }
+
   const [input, setinput] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  // if (isAuthentication()) {
-  //   return < Navigate />
-  // }
+  if (isAuthentication()) {
+    return <Navigate to={"/dashboard "} />;
+  }
 
   return (
     <>
@@ -124,15 +144,16 @@ export default function Register() {
 
             {/* Custom error + Loader */}
             <div className="text-center">
-              {Error.custom_error == true ? (
-                <p className="text-sm text-red-500">Custom Error Message!</p>
-              ) : null}
+              {Error.custom_error && (
+                <p className="text-sm text-red-500">{Error.custom_error}</p>
+              )}
+
               {loading && (
                 <div className="flex justify-center my-3">
                   <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               )}
-              
+
               <button
                 type="submit"
                 disabled={loading}
@@ -145,9 +166,9 @@ export default function Register() {
             {/* Login link */}
             <div className="text-center text-sm text-gray-600">
               Already have an account?{" "}
-              <a href="#" className="text-blue-600 hover:underline">
+              <Link to="/login" className="text-blue-600 hover:underline">
                 Login
-              </a>
+              </Link>
             </div>
           </form>
         </div>

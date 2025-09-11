@@ -1,5 +1,5 @@
 import { getuserdata} from "./Storage"
 
-export function isAuthentication() {
+export default function isAuthentication() {
     return getuserdata()!=null ? true : false
 }
