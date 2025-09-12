@@ -32,10 +32,19 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const logoutUser = ()=>{
-        removeUser();
-        navigate("/login")
+  const logoutUser = () => {
+    try {
+      // removeUser()
+      localStorage.removeItem("idtoken");
+      navigate("/login");
+      
+    } catch (error) {
+      console.log(error);
+      
     }
+    
+};
+
 
   return (
     <>

@@ -25,7 +25,7 @@ export default function Nav({logoutUser}) {
             {isAuthentication() ?<Link to="/dashboard" className="hover:text-blue-400">
               Dashboard
             </Link>:null}
-            {isAuthentication() ?<a href="#" onClick={logoutUser.logoutUser} className="hover:text-blue-400">
+            {isAuthentication() ?<a href="#" onClick={logoutUser} className="hover:text-blue-400">
               Logout
             </a>:null}
           </div>
@@ -76,7 +76,7 @@ export default function Nav({logoutUser}) {
             {isAuthentication() ?<Link to="/dashboard" className="hover:text-blue-400">
               Dashboard
             </Link>:null}
-            {isAuthentication() ?<a href="#" onClick={logoutUser.logoutUser} className="hover:text-blue-400">
+            {isAuthentication() ?<a href="#" onClick={logoutUser} className="hover:text-blue-400">
               Logout
             </a>:null}
         </div>
